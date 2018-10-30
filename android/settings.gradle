@@ -1,0 +1,3 @@
+rootProject.name = 'moneybook_android'
+
+include ':app'
