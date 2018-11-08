@@ -8,7 +8,6 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
-import BackgroundJob from 'react-native-background-job';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -16,16 +15,6 @@ const instructions = Platform.select({
     'Double tap R on your keyboard to reload,\n' +
     'Shake or press menu button for dev menu',
 });
-
-const myJobKey = 'Hej';
-
-BackgroundJob.register({
-  jobKey: myJobKey,
-  job: () => {
-    console.log('Background Job fired!');
-  }
-});
-
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -37,14 +26,10 @@ export default class App extends Component<Props> {
     };
   }
 
-  
   componentDidMount() {
-    BackgroundJob.schedule({
-      jobKey: myJobKey,
-      period: 1000,
-      timeout: 1000
-    });
+  
   }
+
   render() {
     return (
       <View style={styles.container}>
