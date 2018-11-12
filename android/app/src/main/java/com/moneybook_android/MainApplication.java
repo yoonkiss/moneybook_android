@@ -68,7 +68,6 @@ public class MainApplication extends Application implements ReactApplication {
                 @Override
                 public void onResponse(Call<RestResponse> call, Response<RestResponse> response) {
                     if (response.isSuccessful()) {
-                        Log.i(MainApplication.TAG, "card list has been registered.");
 
                         Gson gson = new GsonBuilder().create();
 
@@ -83,6 +82,8 @@ public class MainApplication extends Application implements ReactApplication {
                         SharedPreferences.Editor editor = sp.edit();
                         editor.putString("creditcard", json); // JSON으로 변환한 객체를 저장한다.
                         editor.commit();
+                        Log.i(MainApplication.TAG, "card list has been registered to preferences.");
+
                     } else {
                         Log.i(MainApplication.TAG, "response code: " + response.code());
                     }

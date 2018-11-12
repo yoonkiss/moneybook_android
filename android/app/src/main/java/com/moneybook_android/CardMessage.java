@@ -44,13 +44,14 @@ public class CardMessage {
         SharedPreferences sp = context.getSharedPreferences("shared", MODE_PRIVATE);
         String strContact = sp.getString("creditcard", "");
 
+        Log.i(MainApplication.TAG, "card preference:" + strContact);
 
         Type listType = new TypeToken<ArrayList<CreditCard>>() {
         }.getType();
         Gson gson = new GsonBuilder().create();
         List<CreditCard> cards = gson.fromJson(strContact, listType);
 
-
+        Log.i(MainApplication.TAG, "card preference cnt:" + cards.size());
         for (CreditCard card : cards) {
             if (body.indexOf("삼성") != -1) {
                 if (ADDRESS_SAMSUNG.equals(address) && ADDRESS_SAMSUNG.equals(card.getPhone())) {
@@ -85,7 +86,7 @@ public class CardMessage {
 
         int pos = tmpStr.indexOf(card.getNumber());
         if (pos == -1) {
-            Log.i(MainApplication.TAG, "Skipped to parse samsung card: "+ tmpStr);
+            Log.i(MainApplication.TAG, "Skipped to parse samsung card: " + tmpStr);
             return;
         }
         cardId = card.getId();
@@ -146,7 +147,7 @@ public class CardMessage {
             String[] strArr = parsingLineStr.split(" ");
 
             if (!card.getName().contains("U+")) {
-                Log.i(MainApplication.TAG, "Skipped to parse hana card not contained U+: "+ card.getName());
+                Log.i(MainApplication.TAG, "Skipped to parse hana card not contained U+: " + card.getName());
                 return;
             }
             cardId = card.getId();
@@ -156,7 +157,7 @@ public class CardMessage {
                 return;
             }
             if (!"[하나카드]박*기님".equals(strArr[0]) || !"정상처리".equals(strArr[strArr.length - 1])) {
-                Log.i(MainApplication.TAG, "Skipped to parse hana card: "+ strArr[0] + "///" + strArr[strArr.length - 1]);
+                Log.i(MainApplication.TAG, "Skipped to parse hana card: " + strArr[0] + "///" + strArr[strArr.length - 1]);
                 return;
             }
             if (strArr[strArr.length - 2].endsWith("원")) {
@@ -177,7 +178,7 @@ public class CardMessage {
         } else {
             // 하나(3*0*) 승인 박*기님 20,640원 일시불 10/30 10:08 (주)신세계 누적 1,363,610원
             if (tmpStr.charAt(3) != card.getNumber().charAt(0) || tmpStr.charAt(5) != card.getNumber().charAt(2)) {
-                Log.i(MainApplication.TAG, "Skiped to parse hana card: "+ tmpStr);
+                Log.i(MainApplication.TAG, "Skiped to parse hana card: " + tmpStr);
                 return;
             }
             cardId = card.getId();
@@ -215,7 +216,7 @@ public class CardMessage {
         StringTokenizer st = new StringTokenizer(body, "\n");
 
         if (st.countTokens() != 7) {
-            Log.i(MainApplication.TAG, "Skipped to parse woori card: token size is not 7: "+ body);
+            Log.i(MainApplication.TAG, "Skipped to parse woori card: token size is not 7: " + body);
             return;
         }
 
@@ -231,7 +232,7 @@ public class CardMessage {
 
         int pos = tmpStr.indexOf(card.getNumber());
         if (pos == -1) {
-            Log.i(MainApplication.TAG, "Skipped to parse woori card: "+ tmpStr);
+            Log.i(MainApplication.TAG, "Skipped to parse woori card: " + tmpStr);
             return;
         }
         cardId = card.getId();

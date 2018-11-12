@@ -15,10 +15,6 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class SmsReceiver extends BroadcastReceiver {
     private static final String EVENT = "smsReceived";
     private ReactApplicationContext mContext;
@@ -36,44 +32,11 @@ public class SmsReceiver extends BroadcastReceiver {
     private void receiveMessage(final Context context, final SmsMessage message) {
         Log.i(MainApplication.TAG, "called receiveMessage:" + message.getDisplayMessageBody());
 
-        RestServiceManager serviceManager = RestServiceManager.getInstance();
-        CardMessage msg = new CardMessage(context, message.getOriginatingAddress(), message.getMessageBody());
+        Intent smsService = new Intent(context, RecordService.class);
+        smsService.putExtra("SMS_PHOME", message.getDisplayOriginatingAddress());
+        smsService.putExtra("SMS_MESSAGE", message.getDisplayMessageBody());
 
-        RestService rs = serviceManager.getRestService();
-
-        final Record record = msg.toRecord();
-        if (record == null) {
-            return;
-        }
-        Call<Record> recordCall = rs.addRecord(record);
-
-        recordCall.enqueue(new Callback<Record>() {
-
-            NotificationHandler handler = new NotificationHandler(context);
-
-            @Override
-            public void onResponse(Call<Record> call, Response<Record> response) {
-                if (response.isSuccessful()) {
-                    Log.i(MainApplication.TAG, "Added!");
-
-
-                    handler.createChannel();
-                    handler.sendNotification(record.getDescription(), record.getComments());
-
-                } else {
-                    Log.i(MainApplication.TAG, "Fail to add record: " + response.code());
-                    handler.sendNotification("Fail to set record", "response code: " + response.code());
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<Record> call, Throwable t) {
-                Log.i(MainApplication.TAG, "Fail to add record: " + t.getMessage());
-                handler.sendNotification("Fail to add record", t.getMessage());
-            }
-        });
-
+        context.startService(smsService);
     }
 
     private void sendEvent(ReactContext reactContext,
