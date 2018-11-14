@@ -137,24 +137,20 @@ public class RestService extends IntentService {
         for (int i = 0; i < cards.size(); i++) {
             CreditCard card = (CreditCard)cards.get(i);
 
-            if (phone.equals(card.getPhone())) {
-                if (message.indexOf("삼성") != -1) {
-                    record = createSamsungRecord(card);
-                    break;
-                } else if (message.indexOf("하나") != -1) {
-                    record = createHanaRecord(card);
-                    break;
-                } else if (message.indexOf("우리(") != -1) {
-                    record = createWooriRecord(card);
-                    break;
-                } else {
-                    Log.i(MoneyBookConstant.TAG, "Unknown message:(" + phone + ")" + message);
-                    notlater("Unknown message:" + phone, message);
-                    break;
-                }
+
+            if (message.indexOf("삼성") != -1) {
+                record = createSamsungRecord(card);
+                if (record != null) break;
+            } else if (message.indexOf("하나") != -1) {
+                record = createHanaRecord(card);
+                if (record != null) break;
+            } else if (message.indexOf("우리(") != -1) {
+                record = createWooriRecord(card);
+                if (record != null) break;
+            } else {
+                Log.i(MoneyBookConstant.TAG, "Unknown message:(" + phone + ")" + message);
+                break;
             }
-
-
         }
         return record;
     }
