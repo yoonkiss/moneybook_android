@@ -16,9 +16,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 public class SmsReceiver extends BroadcastReceiver {
-    private static final String EVENT = "smsReceived";
     private ReactApplicationContext mContext;
-
 
     public SmsReceiver() {
         super();
@@ -30,30 +28,18 @@ public class SmsReceiver extends BroadcastReceiver {
 
 
     private void receiveMessage(final Context context, final SmsMessage message) {
-        Log.i(MainApplication.TAG, "called receiveMessage:" + message.getDisplayMessageBody());
+        Log.i(MoneyBookConstant.TAG, "called receiveMessage:" + message.getDisplayMessageBody());
 
-        Intent smsService = new Intent(context, RecordService.class);
+        Intent smsService = new Intent(context, RestService.class);
+        smsService.setAction(MoneyBookConstant.INTENT_PARSING_SMS);
         smsService.putExtra("SMS_PHOME", message.getDisplayOriginatingAddress());
         smsService.putExtra("SMS_MESSAGE", message.getDisplayMessageBody());
 
         context.startService(smsService);
     }
 
-    private void sendEvent(ReactContext reactContext,
-                           String eventName,
-                           @Nullable WritableMap params) {
-        reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
-    }
-
-
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent == null) {
-            Log.e(MainApplication.TAG, "intent is null");
-            return;
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             for (SmsMessage message : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
                 receiveMessage(context, message);
@@ -75,10 +61,9 @@ public class SmsReceiver extends BroadcastReceiver {
                 receiveMessage(context, SmsMessage.createFromPdu((byte[]) pdu));
             }
         } catch (Exception e) {
-            Log.e(MainApplication.TAG, e.getMessage());
+            Log.e(MoneyBookConstant.TAG, e.getMessage());
         }
     }
 
 
 }
-

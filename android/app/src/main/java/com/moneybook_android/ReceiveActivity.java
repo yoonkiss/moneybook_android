@@ -29,11 +29,12 @@ public class ReceiveActivity extends Activity {
         Logger = findViewById(R.id.logger);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            info = extras.getString(NotificationHandler.intentKey);
+            info = extras.getString(MoneyBookConstant.NOTIFICATION_RECEIVE);
             if (info == null) {
                 info = "nothing 2";
             }
         }
         Logger.setText(info);
+
     }
 }
